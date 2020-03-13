@@ -1,54 +1,51 @@
 const express = require('express')
 const app = express()
 const mongoose = require('mongoose');
+const imProduct = require('./product');
 
 app.use(express.json())
 
-mongoose.connect('mongodb://localhost:27017/node-api-101',{useNewUrlParser: true});
+mongoose.connect('mongodb://localhost:27017/node-api-101',{useNewUrlParser: true, useUnifiedTopology: true});
 
 // mock data
-const products = [{
-  id: '1001',
-  name: 'Node.js for Beginners',
-  category: 'Node',
-  price: 990
-}, {
-  id: '1002',
-  name: 'React 101',
-  category: 'React',
-  price: 3990
-}, {
-  id: '1003',
-  name: 'Getting started with MongoDB',
-  category: 'MongoDB',
-  price: 1990
-}]
+const products = [{}]
 
-app.get('/products', (req, res) => {
-  res.json(products)
+app.post('/products',async(req, res) => {
+  const payload = req.body;
+  const product = new imProduct(payload);
+  await product.save();
+  res.status(201).end();
+});
+
+app.get('/products', async (req, res) => {
+  const products = await imProduct.find({});
+  res.json(products);
 })
 
-app.get('/products/:id', (req, res) => {
+app.get('/products/:id', async (req, res) => {
   const { id } = req.params
-  const result = products.find(product => product.id === id)
-  res.json(result)
+  const product = await imProduct.findById(id);
+  res.json(product)
 })
 
-app.post('/products', (req, res) => {
-  const payload = req.body
-  res.json(payload)
-})
-
-app.put('/products/:id', (req, res) => {
+app.put('/products/:id', async (req, res) => {
+  const payload = req.body;
   const { id } = req.params
-  res.json({ id })
+
+  const product = await imProduct.findByIdAndUpdate(id, { $set: payload });
+
+  res.json(product)
 })
 
-app.delete('/products/:id', (req, res) => {
-  const { id } = req.params
-  res.json({ id })
+app.delete('/products/:id', async (req, res) => {
+  const { id } = req.params;
+
+  await imProduct.findByIdAndDelete(id);
+  res.status(204).end();
 })
 
-app.listen(3030, () => {
-  console.log('Application is running on port 3030')
+const port = process.env.port || 3030;
+app.listen(port, () => {
+  console.log("Application is running on port", port);
 })
+

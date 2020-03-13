@@ -6,6 +6,8 @@ const productSchema = new Schema({
     category: String,
     price: Number,
     tags: [String]
+},{
+    timestamps: true, versionKey: false
 });
 
 const ProductModel = mongoose.model('Product', productSchema);
