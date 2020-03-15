@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const firebase = require('firebase');
+const imProduct = require('./product');
 
 var firebaseConfig = {
     apiKey: "AIzaSyCx5OWEXeaGRZWBJNMYvyByI-8VHFW-RiQ",
@@ -22,6 +23,7 @@ app.get('/products',(req, res) => {
   .then(snapshot => {
     snapshot.forEach(doc => {
       console.log(doc.id, '=>' , doc.data());
+      res.send(doc.data())
     });
   })
   .catch(err => {
@@ -31,7 +33,9 @@ app.get('/products',(req, res) => {
 
 app.post('/products',async(req, res) => {
   const payload = req.body;
-  firestore.collection("products").add(payload);
+  const product = new imProduct(payload);
+  console.log(product)
+  res.status(201).end();
 });
 
 const port = process.env.port || 3030;
