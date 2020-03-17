@@ -24,16 +24,28 @@ firebase.initializeApp(firebaseConfig);
 let firestore = firebase.firestore();
 
 app.get('/products',(req, res) => {
-  firestore.collection("products").get()
-  .then(snapshot => {
-    snapshot.forEach(doc => {
-      console.log(doc.id, '=>' , doc.data());
-      res.send(doc.data())
-    });
-  })
-  .catch(err => {
-    console.log('Error getting documents', err);
-  })
+  let query = firestore.collection("products");
+  let response = [];
+  console.log("eiei")
+  query.get().then(querySnapshot => {
+    let docs = querySnapshot.docs;
+    for(let doc of docs) {
+      response.push(doc.data());
+      console.log("wow")
+      console.log(docs.length)
+    }
+  });
+  return res.status(200).send(response);
+  // firestore.collection("products").get()
+  // .then(snapshot => {
+  //   snapshot.forEach(doc => {
+  //     console.log(doc.id, '=>' , doc.data());
+  //     res.send(doc.data())
+  //   });
+  // })
+  // .catch(err => {
+  //   console.log('Error getting documents', err);
+  // })
 });
 
 app.post('/products',async(req, res) => {
@@ -49,13 +61,13 @@ app.get('/products/:id', async (req, res) => {
   const { id } = req.params
   
   firestore.collection("products").where("id","==",id).get()
-  .then(function(snapshot) {
-    console.log(snapshot.docs.length);
-    console.log(snapshot);
-    snapshot.forEach(function(docs) {
-      console.log(docs.data());
-      res.json(docs.data())
+  .then(function(snapshot){
+    snapshot.forEach(function(doc){
+        console.log(doc.id, '=>', doc.data());
+        res.send(doc.data())
+        //res.json(docs.data());
     })
+    res.status(201).end();
   })
   .catch(err => {
     console.log('Error getting documents', err);
@@ -66,17 +78,19 @@ app.put('/products/:id', async (req, res) => {
   const payload = req.body;
   const { id } = req.params;
 
-  firestore.collection("products").where("id","==",id).get()
-  .then(function(snapshot) {
-    console.log(snapshot.docs.length);
-    snapshot.forEach(function(docs) {
-      console.log(docs.data());
-      res.json(docs.data())
-    })
-  })
-  .catch(err => {
-    console.log('Error getting documents', err);
-  })
+  const buff = firestore.collection("products").where("id","==",id)
+  // .then(function(snapshot) {
+  //   snapshot.forEach(function(docs) {
+  //     console.log(docs.data());
+  //     res.json(docs.data())
+  //   })
+  // })
+  // .catch(err => {
+  //   console.log('Error getting documents', err);
+  // })
+  let batch = firestore.batch();
+
+  batch.update(buff,payload);
 
   res.json(product)
 })
