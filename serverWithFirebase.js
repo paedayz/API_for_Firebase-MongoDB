@@ -2,6 +2,11 @@ const express = require('express');
 const app = express();
 const firebase = require('firebase');
 const imProduct = require('./product');
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.urlencoded({ extended: false}));
+
+app.use(bodyParser.json());
 
 var firebaseConfig = {
     apiKey: "AIzaSyCx5OWEXeaGRZWBJNMYvyByI-8VHFW-RiQ",
@@ -33,10 +38,48 @@ app.get('/products',(req, res) => {
 
 app.post('/products',async(req, res) => {
   const payload = req.body;
-  const product = new imProduct(payload);
-  console.log(product)
+  console.log(payload);
+
+  firestore.collection("products").add(payload);
+  
   res.status(201).end();
 });
+
+app.get('/products/:id', async (req, res) => {
+  const { id } = req.params
+  
+  firestore.collection("products").where("id","==",id).get()
+  .then(function(snapshot) {
+    console.log(snapshot.docs.length);
+    console.log(snapshot);
+    snapshot.forEach(function(docs) {
+      console.log(docs.data());
+      res.json(docs.data())
+    })
+  })
+  .catch(err => {
+    console.log('Error getting documents', err);
+  })
+})
+
+app.put('/products/:id', async (req, res) => {
+  const payload = req.body;
+  const { id } = req.params;
+
+  firestore.collection("products").where("id","==",id).get()
+  .then(function(snapshot) {
+    console.log(snapshot.docs.length);
+    snapshot.forEach(function(docs) {
+      console.log(docs.data());
+      res.json(docs.data())
+    })
+  })
+  .catch(err => {
+    console.log('Error getting documents', err);
+  })
+
+  res.json(product)
+})
 
 const port = process.env.port || 3030;
 app.listen(port, function() {

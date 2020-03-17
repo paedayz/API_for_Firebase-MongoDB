@@ -12,8 +12,9 @@ const products = [{}]
 
 app.post('/products',async(req, res) => {
   const payload = req.body;
-  const product = new imProduct(payload);
-  await product.save();
+  // const product = new imProduct(payload);
+  // await product.save();
+  console.log(payload);
   res.status(201).end();
 });
 
