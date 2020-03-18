@@ -83,27 +83,47 @@ app.put('/products/:id',async (req, res) => {
 
   const { id } = req.params;
   const payload = req.body;
+  let batch = firestore.batch();
+  let path = firestore.collection('products');
 
-  await firestore.collection("products").where("id","==",id).update(payload);
 
-  // (async () => {
-  //   try {
-  //       const document = firestore.collection('products').where("id","==",id);
-  //       await document.update(payload);
-  //       return res.status(200).send();
-  //   } catch (error) {
-  //       console.log(error);
-  //       return res.status(500).send(error);
-  //   }
-  // })();
-  
-  // const payload = req.body;
+  await firestore.collection("products").where("id","==",id).get()
+  .then(function(snapshot){
+    snapshot.forEach(function(doc){
+        dataID = doc.id;
+        batch.update(path.doc(dataID), payload);
+        batch.commit();
+    })
+    res.status(200).send()
+  })
+  .catch(err => {
+    console.log('Error getting documents', err);
+  })
 
-  // let batch = firestore.batch();
-  // let path = firestore.collection('products')
+})
 
-  // await batch.update(path, payload);
-  // return res.status(200).send();
+//Delete document by id
+app.delete('/products/:id',async (req, res) => {
+
+  const { id } = req.params;
+  const payload = req.body;
+  let batch = firestore.batch();
+  let path = firestore.collection('products');
+
+
+  await firestore.collection("products").where("id","==",id).get()
+  .then(function(snapshot){
+    snapshot.forEach(function(doc){
+        dataID = doc.id;
+        batch.delete(path.doc(dataID));
+    })
+    batch.commit();
+    res.status(200).send()
+  })
+  .catch(err => {
+    console.log('Error getting documents', err);
+  })
+
 })
 
 const port = process.env.port || 3030;
