@@ -9,14 +9,13 @@ app.use(bodyParser.urlencoded({ extended: false}));
 app.use(bodyParser.json());
 
 var firebaseConfig = {
-    apiKey: "AIzaSyCx5OWEXeaGRZWBJNMYvyByI-8VHFW-RiQ",
-    authDomain: "test-first-firebase-79d89.firebaseapp.com",
-    databaseURL: "https://test-first-firebase-79d89.firebaseio.com",
-    projectId: "test-first-firebase-79d89",
-    storageBucket: "test-first-firebase-79d89.appspot.com",
-    messagingSenderId: "601896548140",
-    appId: "1:601896548140:web:b32bca22ebc24925199e89",
-    measurementId: "G-36Z1FV8TNV"
+    authDomain: "XXXXXXXXXXXXXXXXXXXXXX",
+    databaseURL: "XXXXXXXXXXXXXXXXXXXXXX",
+    projectId: "XXXXXXXXXXXXXXXXXXXXXX",
+    storageBucket: "XXXXXXXXXXXXXXXXXXXXXX",
+    messagingSenderId: "XXXXXXXXXXXXXXXXXXXXXX",
+    appId: "XXXXXXXXXXXXXXXXXXXXXX",
+    measurementId: "XXXXXXXXXXXXXXXXXXXXXX"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
